@@ -1,6 +1,11 @@
 local se_universe = Material( "se_materials/universe.png" )
 local se_spaceship_icon = Material( "se_materials/spaceship_icon.png" )
 
+local se_scoreboard_languages = {
+	Russian = "rus",
+	English = "eng"
+}
+
 function se_open_star_map(stars)
 	if IsValid(se_scoreboard) then
 		se_scoreboard:Hide()
@@ -205,6 +210,30 @@ function se_open_scoreboard(skills, stars)
       end
     end
   end
+
+	local language_combo_box = vgui.Create( "DComboBox", se_scoreboard_main )
+	language_combo_box:SetPos( 5, 5 )
+	language_combo_box:SetSize( 100, 40 )
+	language_combo_box:SetValue( "Language/Язык" )
+	for k, v in pairs(se_scoreboard_languages) do
+		language_combo_box:AddChoice( k, v )
+	end
+	language_combo_box:DockMargin( 10, 10, 10, 0 )
+	language_combo_box:Dock(TOP)
+	language_combo_box:SetFont("se_ScoreboardFont")
+	language_combo_box:SetTextColor(Color(255, 255, 255))
+	language_combo_box.OnSelect = function( panel, index, value )
+		net.Start("se_change_lang")
+		net.WriteString(se_scoreboard_languages[value])
+		net.SendToServer()
+	end
+	function language_combo_box:Paint(w, h)
+		if self.Hovered then
+			draw.RoundedBox( 5, 0, 0, w, h, Color(80, 80, 80, 255) )
+		else
+			draw.RoundedBox( 5, 0, 0, w, h, Color(30, 30, 30, 255) )
+		end
+	end
 
   local se_scoreboard_players = vgui.Create( "DPanel", se_scoreboard )
   se_scoreboard_players:SetSize(350, 600)

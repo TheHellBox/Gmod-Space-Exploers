@@ -39,6 +39,7 @@ util.AddNetworkString( "se_take_mission" )
 util.AddNetworkString( "se_update_enemy_state" )
 util.AddNetworkString( "se_send_ship_state" )
 util.AddNetworkString( "se_send_planet_info" )
+util.AddNetworkString( "se_change_lang" )
 
 -- Include libs
 include("lib/name_gen.lua")
@@ -49,6 +50,9 @@ include("lib/events_simple.lua")
 include("lib/support.lua")
 
 -- Include base
+include("base/se_settings.lua")
+include("base/se_lang.lua")
+include("base/se_lang_ru.lua")
 include("base/skills.lua")
 include("base/weapons.lua")
 include("base/ship.lua")
@@ -90,6 +94,10 @@ function GM:PlayerSpawn( ply )
       hands:DoSetup( ply )
       hands:Spawn()
   end
+  if player.GetCount() == 1 then
+    ply:SetNWBool("se_is_сaptain", true)
+    ply.is_captain = true
+  end
 end
 
 function GM:PlayerInitialSpawn( ply )
@@ -105,6 +113,7 @@ function GM:PlayerInitialSpawn( ply )
 end
 
 function GM:Initialize()
+  se_init_comms()
   -- I don't remember why I made custom team for players, but I don't want to break anything
   team.SetUp( 123, "Players", Color( 255, 0, 0 ) )
 end
@@ -136,5 +145,19 @@ hook.Add("ShouldCollide","se_nocollide_player",function(a,b)
   end
   if a:IsNPC() and b:IsNPC() then
     return false
+  end
+end)
+
+function se_change_lang(lang)
+  print("Language has been changed to"..lang)
+  se_settings.language = lang
+  se_init_comms()
+end
+
+net.Receive("se_change_lang", function(_, ply)
+  local lang = net.ReadString()
+  if !ply.is_captain then ply:ChatPrint("You should be captain to change language") return end
+  if se_language[lang] != nil then
+    se_change_lang(lang)
   end
 end)

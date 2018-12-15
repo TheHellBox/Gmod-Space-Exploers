@@ -93,7 +93,12 @@ function se_draw_player_name( ply )
 				local text = v:Name()
 				surface.SetFont( "se_NPCFont" )
 				local width, _ = surface.GetTextSize( text )
-				draw.SimpleText(text, "se_NPCFont", -width / 2, 0, Color(200, 200, 200, 255), 0, 0, TEXT_ALIGN_CENTER);
+				local is_captain = ply:GetNWBool("se_is_сaptain", false)
+				local color = Color(200, 200, 200, 255)
+				if is_captain then
+					color = Color(200, 100, 100, 255)
+				end
+				draw.SimpleText(text, "se_NPCFont", -width / 2, 0, color, 0, 0, TEXT_ALIGN_CENTER);
 			cam.End3D2D()
 		end
 	end
