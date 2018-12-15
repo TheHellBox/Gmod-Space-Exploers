@@ -244,19 +244,43 @@ function se_open_scoreboard(skills, stars)
 
   for k, v in pairs(player.GetAll()) do
     local se_scoreboard_player_btn = vgui.Create( "DButton", se_scoreboard_players )
-    se_scoreboard_player_btn:SetText("")
+    se_scoreboard_player_btn:SetText(v:Name()..": "..v:GetNWString("se_race", "Humans"))
     se_scoreboard_player_btn:SetSize(350, 40)
     se_scoreboard_player_btn:DockMargin( 10, 10, 10, 0 )
     se_scoreboard_player_btn:Dock(TOP)
+		se_scoreboard_player_btn:SetFont("se_ScoreboardFont")
+		se_scoreboard_player_btn:SetTextColor(Color(255, 255, 255))
+		se_scoreboard_player_btn:SetContentAlignment( 7 )
     function se_scoreboard_player_btn:Paint(w, h)
       if self.Hovered then
         draw.RoundedBox( 5, 0, 0, w, h, Color(80, 80, 80, 255) )
-        draw.DrawText( v:Name()..": "..v:GetNWString("se_race", "Humans"), "se_ScoreboardFont", w / 2, 10, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER )
       else
         draw.RoundedBox( 5, 0, 0, w, h, Color(30, 30, 30, 255) )
-        draw.DrawText( v:Name()..": "..v:GetNWString("se_race", "Humans"), "se_ScoreboardFont", w / 2, 10, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER )
       end
     end
+		if LocalPlayer():GetNWBool("se_is_сaptain", false) and v != LocalPlayer() then
+			se_scoreboard_player_btn:SetSize(350, 70)
+			local se_make_captain = vgui.Create( "DButton", se_scoreboard_player_btn )
+			se_make_captain:SetText("Make captain")
+			se_make_captain:SetSize(100, 30)
+			se_make_captain:DockMargin( 5, 5, 5, 5 )
+			se_make_captain:Dock(BOTTOM)
+			se_make_captain:SetFont("se_ScoreboardFont")
+			se_make_captain:SetTextColor(Color(255, 255, 255))
+			function se_make_captain:Paint(w, h)
+				if self.Hovered then
+					draw.RoundedBox( 5, 0, 0, w, h, Color(120, 120, 180, 255) )
+				else
+					draw.RoundedBox( 5, 0, 0, w, h, Color(80, 80, 120, 255) )
+				end
+			end
+			function se_make_captain:OnMousePressed()
+				net.Start("se_make_captain")
+				net.WriteEntity(v)
+				net.SendToServer()
+				se_scoreboard:Remove()
+			end
+		end
   end
 end
 

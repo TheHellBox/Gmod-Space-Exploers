@@ -40,6 +40,7 @@ util.AddNetworkString( "se_update_enemy_state" )
 util.AddNetworkString( "se_send_ship_state" )
 util.AddNetworkString( "se_send_planet_info" )
 util.AddNetworkString( "se_change_lang" )
+util.AddNetworkString( "se_make_captain" )
 
 -- Include libs
 include("lib/name_gen.lua")
@@ -149,7 +150,7 @@ hook.Add("ShouldCollide","se_nocollide_player",function(a,b)
 end)
 
 function se_change_lang(lang)
-  print("Language has been changed to"..lang)
+  print("Language has been changed to "..lang)
   se_settings.language = lang
   se_init_comms()
 end
@@ -159,5 +160,16 @@ net.Receive("se_change_lang", function(_, ply)
   if !ply.is_captain then ply:ChatPrint("You should be captain to change language") return end
   if se_language[lang] != nil then
     se_change_lang(lang)
+  end
+end)
+
+net.Receive("se_make_captain", function(_, ply)
+  local new_captain = net.ReadEntity()
+  if IsValid(new_captain) and new_captain:IsPlayer() and ply.is_captain then
+    ply:SetNWBool("se_is_сaptain", false)
+    ply.is_captain = false
+
+    new_captain:SetNWBool("se_is_сaptain", true)
+    new_captain.is_captain = true
   end
 end)
