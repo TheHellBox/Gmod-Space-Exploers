@@ -78,6 +78,15 @@ function se_init_ship()
   space_explorers_spawn_modules()
 end
 
+sound.Add( {
+	name = "se_drive_charge_sound",
+	channel = CHAN_STATIC,
+	volume = 1.0,
+	level = 80,
+	pitch = { 95, 110 },
+	sound = "ambient/energy/force_field_loop1.wav"
+} )
+
 function se_damage_players_ship_with_weapon(weapon, module)
   timer.Create("se_weapon_shoot_main", 0.5, weapon.Shots, function()
     if players_spaceship.shields > 20 and !weapon.IgnoreShileds then
@@ -89,6 +98,7 @@ function se_damage_players_ship_with_weapon(weapon, module)
         players_spaceship.modules[module].ent:EmitSound("ambient/explosions/explode_"..math.random(1, 9)..".wav")
         players_spaceship.health = players_spaceship.health - (weapon.Damage / 3)
         players_spaceship.modules[module].health = players_spaceship.modules[module].health - weapon.Damage
+        se_send_event_broadcast(3)
         if math.random(0, 100) > 91 then
           se_ship_ignite_random_module()
         end
@@ -245,24 +255,21 @@ end
 
 -- Drive charging
 function se_charge_drive()
-  local time_to_charge = 10
+  local charge_rate = 10
   if enemy_spaceship and enemy_spaceship.valid then
-    se_send_event_broadcast(7)
-    time_to_charge = 100
+    charge_rate = 1
   else
-    se_send_event_broadcast(1)
-    time_to_charge = 10
+    charge_rate = 10
   end
-  timer.Create("se_charge_drive_timer", 1, time_to_charge, function()
+  players_spaceship.modules.Pilot.ent:EmitSound("se_drive_charge_sound")
+  timer.Create("se_charge_drive_timer", 1, 0, function()
     if players_spaceship.modules.HyperDrive.ent.enabled then
       if players_spaceship.drive_charge < 100 then
-        if time_to_charge == 100 then
-          players_spaceship.drive_charge = players_spaceship.drive_charge + 2
-        else
-          players_spaceship.drive_charge = players_spaceship.drive_charge + 10
-        end
+        players_spaceship.drive_charge = players_spaceship.drive_charge + charge_rate
       else
+        timer.Stop("se_charge_drive_timer")
         players_spaceship.drive_charge = 100
+        players_spaceship.modules.Pilot.ent:StopSound("se_drive_charge_sound")
       end
     end
   end)
@@ -328,7 +335,7 @@ function se_try_jump()
       players_spaceship.modules.Communication.ent:PrintLn("+2 credits for exploring system")
     end
     se_star_map.stars[se_star_map.player_pos].explored = true
-    se_send_event_broadcast(2)
+    players_spaceship.modules.Pilot.ent:EmitSound("ambient/machines/teleport3.wav")
   end
 end
 

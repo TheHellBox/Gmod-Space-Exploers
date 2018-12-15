@@ -44,8 +44,6 @@ net.Receive("se_event_simple", function()
   -- Hit into players ship
   if event == 3 then
     util.ScreenShake( Vector( 0, 0, 0 ), 10, 10, 1, 5000 )
-    local sound = CreateSound(LocalPlayer(), "ambient/explosions/explode_"..math.random(1, 9)..".wav")
-    sound:PlayEx(0.5, 100)
   end
   -- Hit into shields
   if event == 4 then

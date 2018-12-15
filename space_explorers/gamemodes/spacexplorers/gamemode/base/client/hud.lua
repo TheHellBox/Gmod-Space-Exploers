@@ -114,6 +114,8 @@ local function se_draw_bar(value, color, pos, size, max)
 end
 
 hook.Add( "PostDrawTranslucentRenderables", "se_draw_ship_state", function()
+	local is_player_there = LocalPlayer():GetPos():WithinAABox(  Vector(506, -1946, 723), Vector(-2667, -173, -229) )
+	if !is_player_there then return end
 	if se_enemy_ship_state.health > 0 then
 		cam.Start3D2D(Vector(-800,-1159,128), Angle(0, 180, 90), 0.15)
 			surface.SetDrawColor( 40, 40, 40, 255 )

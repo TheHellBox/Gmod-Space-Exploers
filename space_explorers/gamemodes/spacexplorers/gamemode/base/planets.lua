@@ -319,6 +319,7 @@ function se_remove_planet_model()
   net.WriteTable(space_body)
   net.Broadcast()
   se_send_planet_info()
+  se_is_planet = false
 end
 
 function se_init_teleports()

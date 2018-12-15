@@ -126,7 +126,7 @@ end
 -- Damage ship with specific weapon
 function se_damage_enemy_ship_with_weapon(weapon, module)
   timer.Create("se_weapon_shoot_main", 0.5, weapon.Shots, function()
-    se_send_event_broadcast(5)
+    players_spaceship.modules.Weapons.ent:EmitSound("weapons/ar2/fire1.wav")
     if enemy_spaceship.shields > 20 and !weapon.IgnoreShileds then
         enemy_spaceship.shields = enemy_spaceship.shields - weapon.Damage
     else
