@@ -67,6 +67,7 @@ end)
 net.Receive("se_jump_to_next_sector", function(_, ply)
   if se_star_map.stars[se_star_map.player_pos].type == "Exit" then
     se_fractions.Mission = false
+    se_global_sectors = se_global_sectors + 1
     se_gen_star_map()
   end
 end)

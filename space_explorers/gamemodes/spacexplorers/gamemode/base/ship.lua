@@ -4,6 +4,9 @@ function se_init_ship()
   se_curret_comm = ""
   se_comm_done = false
   se_is_planet = false
+  se_global_jumps = 0
+  se_global_explored = 0
+  se_global_sectors = 0
   se_fraction = "Federation"
   se_curret_planet = Vector(0, 0, 0)
   -- Корабль игрока. Синхронизация происходит каждую секунду
@@ -86,6 +89,20 @@ sound.Add( {
 	pitch = { 95, 110 },
 	sound = "ambient/energy/force_field_loop1.wav"
 } )
+
+function se_game_losed()
+  net.Start("se_game_losed")
+  net.WriteTable({
+    jumps = se_global_jumps,
+    sectors = se_global_sectors,
+    explored = se_global_explored
+  })
+  net.Broadcast()
+  se_init_ship()
+  timer.Simple(30, function()
+    RunConsoleCommand("changelevel", "se_spaceship")
+  end)
+end
 
 function se_damage_players_ship_with_weapon(weapon, module)
   timer.Create("se_weapon_shoot_main", 0.5, weapon.Shots, function()
@@ -190,12 +207,7 @@ function se_ship_update()
   end
   -- Destroy ship if hp is too low
   if players_spaceship.health <= 0 then
-    for k, v in pairs(player.GetAll()) do
-      v:ChatPrint("Your ship has been destroyed!")
-      v:Kill()
-    end
-    se_destroy_enemy_ship()
-    se_init_ship()
+    se_game_losed()
   end
   se_send_ship_state()
 end
@@ -334,6 +346,12 @@ function se_try_jump()
       players_spaceship.credits = players_spaceship.credits + 2
       players_spaceship.modules.Communication.ent:PrintLn("+2 credits for exploring system")
     end
+
+    se_global_jumps = se_global_jumps + 1
+    if !star.explored then
+      se_global_explored = se_global_explored + 1
+    end
+
     se_star_map.stars[se_star_map.player_pos].explored = true
     players_spaceship.modules.Pilot.ent:EmitSound("ambient/machines/teleport3.wav")
   end

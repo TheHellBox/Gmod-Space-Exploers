@@ -41,6 +41,7 @@ util.AddNetworkString( "se_send_ship_state" )
 util.AddNetworkString( "se_send_planet_info" )
 util.AddNetworkString( "se_change_lang" )
 util.AddNetworkString( "se_make_captain" )
+util.AddNetworkString( "se_game_losed" )
 
 -- Include libs
 include("lib/name_gen.lua")
@@ -66,7 +67,7 @@ include("base/shop_npc.lua")
 include("base/star_map.lua")
 include("base/fractions.lua")
 
--- AddCSLuaFile(Make client download all client scripts)
+-- AddCSLuaFile(Make client download all client side scripts)
 AddCSLuaFile("base/client/ship_state_update.lua")
 AddCSLuaFile("base/client/race_choose_menu.lua")
 AddCSLuaFile("base/client/ship_uis.lua")
@@ -75,6 +76,7 @@ AddCSLuaFile("base/client/hud.lua")
 AddCSLuaFile("base/client/shop_npc.lua")
 AddCSLuaFile("base/client/fractions_ui.lua")
 AddCSLuaFile("base/client/scoreboard.lua")
+AddCSLuaFile("base/client/lose_menu.lua")
 AddCSLuaFile("lib/support.lua")
 AddCSLuaFile("lib/draw.lua")
 
@@ -157,7 +159,7 @@ end
 
 net.Receive("se_change_lang", function(_, ply)
   local lang = net.ReadString()
-  if !ply.is_captain then ply:ChatPrint("You should be captain to change language") return end
+  if !ply.is_captain then ply:ChatPrint("Only captain can change language") return end
   if se_language[lang] != nil then
     se_change_lang(lang)
   end

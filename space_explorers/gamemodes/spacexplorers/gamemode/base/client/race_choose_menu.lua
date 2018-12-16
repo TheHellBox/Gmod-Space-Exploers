@@ -8,9 +8,6 @@ net.Receive("se_choose_race", function()
   choose_race_frame:SetDraggable( true )
   choose_race_frame:MakePopup()
   choose_race_frame:ShowCloseButton( false )
-  function choose_race_frame:Paint( w, h )
-    draw_frame(w, h)
-  end
   function choose_race_frame:Paint(w, h)
     draw.RoundedBox( 5, 0, 0, w, h, Color(50, 50, 50, 255) )
   end

@@ -1,6 +1,7 @@
 include("shop_npc.lua")
 include("fractions_ui.lua")
 include("scoreboard.lua")
+include("lose_menu.lua")
 
 local spacesuit_glass = Material( "se_materials/spacesuit.png", "noclamp smooth" )
 

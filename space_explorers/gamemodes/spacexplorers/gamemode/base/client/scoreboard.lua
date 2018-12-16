@@ -96,6 +96,7 @@ function se_open_star_map(stars)
 	function se_map_browser_close:OnMousePressed()
 		se_scoreboard:Show()
 		se_map_browser:Remove()
+		se_scoreboard:Remove()
 	end
 	function se_map_browser_close:Paint(w, h)
 		if self.Hovered then
