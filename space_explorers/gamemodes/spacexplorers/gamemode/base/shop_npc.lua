@@ -197,8 +197,12 @@ net.Receive("se_buy_item", function(_, ply)
   local ent = net.ReadEntity()
   local item = net.ReadInt(8)
   local item = ent.items[item]
-  if players_spaceship.credits >= item.Price then
+  if players_spaceship.credits >= item.Price and ply.shopping_enabled then
     players_spaceship.credits = players_spaceship.credits - item.Price
     item.Fn(ply)
+  else
+    if !ply.shopping_enabled then
+      ply:ChatPrint("Captain disabled shopping for you")
+    end
   end
 end)

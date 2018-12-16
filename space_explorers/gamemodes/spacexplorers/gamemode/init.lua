@@ -4,7 +4,7 @@
 
 -- About comments, I made them AFTER I wrote all the code, so they can be wrong in some places
 
-resource.AddWorkshop( "1590745371" )
+--resource.AddWorkshop( "1590745371" )
 
 space_explorers = {}
 
@@ -44,6 +44,7 @@ util.AddNetworkString( "se_make_captain" )
 util.AddNetworkString( "se_game_losed" )
 util.AddNetworkString( "se_load_game" )
 util.AddNetworkString( "se_save_game" )
+util.AddNetworkString( "se_enable_shopping" )
 
 -- Include libs
 include("lib/name_gen.lua")
@@ -101,7 +102,9 @@ function GM:PlayerSpawn( ply )
   end
   if player.GetCount() == 1 then
     ply:SetNWBool("se_is_сaptain", true)
+    ply:SetNWBool("se_shopping_enabled", true)
     ply.is_captain = true
+    ply.shopping_enabled = true
   end
 end
 
@@ -174,6 +177,13 @@ end)
 net.Receive("se_save_game", function(_, ply)
   if !ply.is_captain then ply:ChatPrint("Only captain can save game") return end
   se_save_game()
+end)
+net.Receive("se_enable_shopping", function(_, ply)
+  local pl = net.ReadEntity()
+  local enabled = net.ReadBool()
+  if !ply.is_captain then ply:ChatPrint("Only captain can do this") return end
+  pl:SetNWBool("se_shopping_enabled", enabled)
+  pl.shopping_enabled = enabled
 end)
 
 net.Receive("se_make_captain", function(_, ply)

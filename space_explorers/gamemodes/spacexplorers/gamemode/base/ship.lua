@@ -98,7 +98,7 @@ function se_game_losed()
     explored = se_global_explored
   })
   net.Broadcast()
-  se_init_ship()
+  players_spaceship.health = 9999
   timer.Simple(30, function()
     RunConsoleCommand("changelevel", "se_spaceship")
   end)

@@ -279,8 +279,14 @@ function se_open_scoreboard(skills, stars)
     draw.RoundedBox( 5, 0, 0, w, h, Color(50, 50, 50, 250) )
   end
 
+	local se_scoreboard_players_scroller = vgui.Create( "DHorizontalScroller", se_scoreboard_players )
+  se_scoreboard_players_scroller:Dock(FILL)
+  function se_scoreboard_players_scroller:Paint(w, h)
+
+  end
+
   for k, v in pairs(player.GetAll()) do
-    local se_scoreboard_player_btn = vgui.Create( "DButton", se_scoreboard_players )
+    local se_scoreboard_player_btn = vgui.Create( "DButton", se_scoreboard_players_scroller )
     se_scoreboard_player_btn:SetText(v:Name()..": "..v:GetNWString("se_race", "Humans"))
     se_scoreboard_player_btn:SetSize(350, 40)
     se_scoreboard_player_btn:DockMargin( 10, 10, 10, 0 )
@@ -295,8 +301,11 @@ function se_open_scoreboard(skills, stars)
         draw.RoundedBox( 5, 0, 0, w, h, Color(30, 30, 30, 255) )
       end
     end
+		-- There we init buttons for captain
 		if LocalPlayer():GetNWBool("se_is_сaptain", false) and v != LocalPlayer() then
-			se_scoreboard_player_btn:SetSize(350, 70)
+			-- Change size of the button
+			se_scoreboard_player_btn:SetSize(350, 90)
+			-- Create button for making player a captain
 			local se_make_captain = vgui.Create( "DButton", se_scoreboard_player_btn )
 			se_make_captain:SetText("Make captain")
 			se_make_captain:SetSize(100, 30)
@@ -311,12 +320,30 @@ function se_open_scoreboard(skills, stars)
 					draw.RoundedBox( 5, 0, 0, w, h, Color(80, 80, 120, 255) )
 				end
 			end
+			-- When we click we send netmsg
 			function se_make_captain:OnMousePressed()
 				net.Start("se_make_captain")
 				net.WriteEntity(v)
 				net.SendToServer()
 				se_scoreboard:Remove()
 			end
+			-- Shopping enabled checkbox
+			local shopping_enabled = vgui.Create( "DCheckBox", se_scoreboard_player_btn )
+			shopping_enabled:SetPos(10, 30)
+			shopping_enabled:SetValue( v:GetNWBool("se_shopping_enabled", false) )
+			function shopping_enabled:OnChange( bVal )
+				net.Start("se_enable_shopping")
+				net.WriteEntity(v)
+				net.WriteBool(bVal)
+				net.SendToServer()
+			end
+			-- Label to checkbox
+			local DLabel = vgui.Create( "DLabel", se_scoreboard_player_btn )
+			DLabel:SetSize(200, 50)
+			DLabel:SetPos(30, 10)
+			DLabel:SetText( "Enable shopping" )
+			DLabel:SetFont("se_ScoreboardFont")
+			DLabel:SetColor(Color(255, 255, 255))
 		end
   end
 end
