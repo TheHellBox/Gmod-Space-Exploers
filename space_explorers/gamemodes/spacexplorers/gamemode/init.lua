@@ -42,6 +42,8 @@ util.AddNetworkString( "se_send_planet_info" )
 util.AddNetworkString( "se_change_lang" )
 util.AddNetworkString( "se_make_captain" )
 util.AddNetworkString( "se_game_losed" )
+util.AddNetworkString( "se_load_game" )
+util.AddNetworkString( "se_save_game" )
 
 -- Include libs
 include("lib/name_gen.lua")
@@ -163,6 +165,15 @@ net.Receive("se_change_lang", function(_, ply)
   if se_language[lang] != nil then
     se_change_lang(lang)
   end
+end)
+
+net.Receive("se_load_game", function(_, ply)
+  if !ply.is_captain then ply:ChatPrint("Only captain can load game") return end
+  se_load_game()
+end)
+net.Receive("se_save_game", function(_, ply)
+  if !ply.is_captain then ply:ChatPrint("Only captain can save game") return end
+  se_save_game()
 end)
 
 net.Receive("se_make_captain", function(_, ply)

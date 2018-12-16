@@ -118,6 +118,26 @@ function se_update_ship_angle(ang)
   net.WriteAngle(ang)
   net.Broadcast()
 end
+
+function se_save_game()
+  local ship_str = util.TableToJSON(players_spaceship)
+  file.Write("se_save1.txt", ship_str)
+end
+
+function se_load_game()
+  if !file.Exists( "se_save1.txt", "DATA" ) then return end
+  local ship_save = file.Read( "se_save1.txt", "DATA" )
+  local ship_load = util.JSONToTable( ship_save )
+  if ship_load != nil then
+    players_spaceship.health = ship_load.health
+    players_spaceship.max_health = ship_load.max_health
+    players_spaceship.max_shields = ship_load.max_shields
+    players_spaceship.modules.Weapons.weapons = ship_load.modules.Weapons.weapons
+    players_spaceship.shield_reg_mod = ship_load.shield_reg_mod
+    players_spaceship.credits = ship_load.credits
+  end
+end
+
 -- Old unused functional from piloting
 function se_add_ship_pos (pos)
   players_spaceship.pos:Add(pos)

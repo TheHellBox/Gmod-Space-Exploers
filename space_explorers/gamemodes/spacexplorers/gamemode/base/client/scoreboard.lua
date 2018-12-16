@@ -236,6 +236,42 @@ function se_open_scoreboard(skills, stars)
 		end
 	end
 
+	local se_scoreboard_load_game = vgui.Create( "DButton", se_scoreboard_main )
+	se_scoreboard_load_game:SetText("")
+	se_scoreboard_load_game:SetSize(350, 60)
+	se_scoreboard_load_game:DockMargin( 10, 10, 10, 0 )
+	se_scoreboard_load_game:Dock(TOP)
+	function se_scoreboard_load_game:OnMousePressed()
+		net.Start("se_load_game")
+		net.SendToServer()
+	end
+	function se_scoreboard_load_game:Paint(w, h)
+		if self.Hovered then
+			draw.RoundedBox( 5, 0, 0, w, h, Color(40, 160, 40, 255) )
+		else
+			draw.RoundedBox( 5, 0, 0, w, h, Color(10, 120, 10, 255) )
+		end
+		draw.DrawText( "Load game", "se_ScoreboardFont", w / 2, 20, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER )
+	end
+
+	local se_scoreboard_save_game = vgui.Create( "DButton", se_scoreboard_main )
+	se_scoreboard_save_game:SetText("")
+	se_scoreboard_save_game:SetSize(350, 60)
+	se_scoreboard_save_game:DockMargin( 10, 10, 10, 0 )
+	se_scoreboard_save_game:Dock(TOP)
+	function se_scoreboard_save_game:OnMousePressed()
+		net.Start("se_save_game")
+		net.SendToServer()
+	end
+	function se_scoreboard_save_game:Paint(w, h)
+		if self.Hovered then
+			draw.RoundedBox( 5, 0, 0, w, h, Color(40, 40, 80, 255) )
+		else
+			draw.RoundedBox( 5, 0, 0, w, h, Color(80, 80, 130, 255) )
+		end
+		draw.DrawText( "Save game", "se_ScoreboardFont", w / 2, 20, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER )
+	end
+
   local se_scoreboard_players = vgui.Create( "DPanel", se_scoreboard )
   se_scoreboard_players:SetSize(350, 600)
   se_scoreboard_players:Dock(RIGHT)
