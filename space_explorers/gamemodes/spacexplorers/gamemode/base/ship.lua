@@ -104,26 +104,6 @@ function se_game_losed()
   end)
 end
 
-function se_damage_players_ship_with_weapon(weapon, module)
-  timer.Create("se_weapon_shoot_main", 0.5, weapon.Shots, function()
-    if players_spaceship.shields > 20 and !weapon.IgnoreShileds then
-        players_spaceship.modules.Shields.ent:EmitSound("ambient/explosions/exp"..math.random(1, 4)..".wav")
-        players_spaceship.shields = players_spaceship.shields - weapon.Damage
-    else
-      local hit = weapon.ShotChanse < math.random(0, 100)
-      if hit then
-        players_spaceship.modules[module].ent:EmitSound("ambient/explosions/explode_"..math.random(1, 9)..".wav")
-        players_spaceship.health = players_spaceship.health - (weapon.Damage / 3)
-        players_spaceship.modules[module].health = players_spaceship.modules[module].health - weapon.Damage
-        se_send_event_broadcast(3)
-        if math.random(0, 100) > 91 then
-          se_ship_ignite_random_module()
-        end
-      end
-    end
-  end)
-end
-
 -- Old unused functional from piloting
 function se_update_ship_pos(pos)
   players_spaceship.pos = pos
@@ -273,7 +253,8 @@ function se_charge_drive()
   else
     charge_rate = 10
   end
-  players_spaceship.modules.Pilot.ent:EmitSound("se_drive_charge_sound")
+  players_spaceship.modules.HyperDrive.ent:StopSound("se_drive_charge_sound")
+  players_spaceship.modules.HyperDrive.ent:EmitSound("se_drive_charge_sound")
   timer.Create("se_charge_drive_timer", 1, 0, function()
     if players_spaceship.modules.HyperDrive.ent.enabled then
       if players_spaceship.drive_charge < 100 then
@@ -281,7 +262,7 @@ function se_charge_drive()
       else
         timer.Stop("se_charge_drive_timer")
         players_spaceship.drive_charge = 100
-        players_spaceship.modules.Pilot.ent:StopSound("se_drive_charge_sound")
+        players_spaceship.modules.HyperDrive.ent:StopSound("se_drive_charge_sound")
       end
     end
   end)
@@ -315,21 +296,7 @@ function se_try_jump()
           v:GiveTalentPoints(1)
         end
       end
-      local option, key = table.Random(communication_options)
-      if star.type == "Shop" then
-        option = communication_options.ShopSimple
-        key = "ShopSimple"
-      end
-      se_curret_comm = key
-      players_spaceship.modules.Communication.ent:PrintLn("- "..option.Text)
-      local i = 0
-      for k, v in pairs(option.Options) do
-        i = i + 1
-        players_spaceship.modules.Communication.ent:PrintLn("  "..i.."."..v.text)
-      end
-      if option.Enemy then
-        se_create_random_enemy_ship()
-      end
+      se_random_comm(star)
     end
     local planet = math.random( 1, 8 ) > 5
     if planet then
@@ -356,96 +323,3 @@ function se_try_jump()
     players_spaceship.modules.Pilot.ent:EmitSound("ambient/machines/teleport3.wav")
   end
 end
-
-
--- Old piloting thing, not used anymore
-function GM:PlayerButtonDown( ply, button )
-  if ply.InShip then
-    if button == KEY_SPACE then
-      players_spaceship.virtual_speed = 5
-    end
-    if button == KEY_LSHIFT then
-      players_spaceship.virtual_speed = -5
-    end
-    if button == KEY_W then
-      players_spaceship.virtual_angles[2] = -1
-    end
-    if button == KEY_S then
-      players_spaceship.virtual_angles[2] = 1
-    end
-    if button == KEY_A then
-      players_spaceship.virtual_angles[1] = -1
-    end
-    if button == KEY_D then
-      players_spaceship.virtual_angles[1] = 1
-    end
-    if button == KEY_Q then
-      players_spaceship.virtual_angles[3] = 1
-    end
-    if button == KEY_E then
-      players_spaceship.virtual_angles[3] = -1
-    end
-  end
-end
--- Old piloting thing, not used anymore
-function GM:PlayerButtonUp( ply, button )
-  if ply.InShip then
-    if button == KEY_R then
-      ply:StartFlying(false)
-    end
-    if button == KEY_SPACE then
-      players_spaceship.virtual_speed = 0
-    end
-    if button == KEY_LSHIFT then
-      players_spaceship.virtual_speed = 0
-    end
-    if button == KEY_W then
-      players_spaceship.virtual_angles[2] = 0
-    end
-    if button == KEY_S then
-      players_spaceship.virtual_angles[2] = 0
-    end
-    if button == KEY_A then
-      players_spaceship.virtual_angles[1] = 0
-    end
-    if button == KEY_D then
-      players_spaceship.virtual_angles[1] = 0
-    end
-    if button == KEY_Q then
-      players_spaceship.virtual_angles[3] = 0
-    end
-    if button == KEY_E then
-      players_spaceship.virtual_angles[3] = 0
-    end
-  end
-end
--- Old piloting thing, not used anymore
-hook.Add("Think", "update_players_pos", function()
-  if players_spaceship then
-    players_spaceship.speed = Lerp( 0.01, players_spaceship.speed, players_spaceship.virtual_speed )
-    players_spaceship.angle_speed = LerpAngle( 0.02, players_spaceship.angle_speed or Angle(), players_spaceship.virtual_angles or Angle() )
-    local mat = Matrix()
-    mat:SetAngles(players_spaceship.ang)
-    mat:Invert()
-    local forward = mat:GetForward()
-    result = players_spaceship.speed * forward
-
-    se_add_ship_pos(result)
-    se_add_ship_angle(players_spaceship.angle_speed or Angle())
-    local dir = Matrix()
-    dir:Scale(Vector(1000, 500, 50))
-    dir:Rotate(players_spaceship.ang)
-    dir = dir:GetScale()
-    for k, v in pairs(se_asteroids or {}) do
-      if v[1]:WithinAABox( players_spaceship.pos + dir, players_spaceship.pos  - dir) then
-        if !v.ship_collided then
-          v.ship_collided = true
-          players_spaceship.speed = (players_spaceship.speed + 2) * -1
-          players_spaceship.modules.Pilot.ent:EmitSound( "vehicles/airboat/pontoon_impact_hard1.wav" )
-        end
-      else
-        v.ship_collided = false
-      end
-    end
-  end
-end)

@@ -54,3 +54,40 @@ se_weapons = {
     MaxCharge = 50
   },
 }
+
+function se_damage_players_ship_with_weapon(weapon, module)
+  timer.Create("se_weapon_shoot_main", 0.5, weapon.Shots, function()
+    if players_spaceship.shields > 20 and !weapon.IgnoreShileds then
+        players_spaceship.modules.Shields.ent:EmitSound("ambient/explosions/exp"..math.random(1, 4)..".wav")
+        players_spaceship.shields = players_spaceship.shields - weapon.Damage
+    else
+      local hit = weapon.ShotChanse < math.random(0, 100)
+      if hit then
+        players_spaceship.modules[module].ent:EmitSound("ambient/explosions/explode_"..math.random(1, 9)..".wav")
+        players_spaceship.health = players_spaceship.health - (weapon.Damage / 3)
+        players_spaceship.modules[module].health = players_spaceship.modules[module].health - weapon.Damage
+        se_send_event_broadcast(3)
+        if math.random(0, 100) > 91 then
+          se_ship_ignite_random_module()
+        end
+      end
+    end
+  end)
+end
+
+-- Damage ship with specific weapon
+function se_damage_enemy_ship_with_weapon(weapon, module)
+  timer.Create("se_weapon_shoot_main", 0.5, weapon.Shots, function()
+    players_spaceship.modules.Weapons.ent:EmitSound("weapons/ar2/fire1.wav")
+    if enemy_spaceship.shields > 20 and !weapon.IgnoreShileds then
+        enemy_spaceship.shields = enemy_spaceship.shields - weapon.Damage
+    else
+      local hit = weapon.ShotChanse < math.random(0, 100)
+      if hit then
+        enemy_spaceship.health = enemy_spaceship.health - weapon.Damage
+        enemy_spaceship.modules[module].health = enemy_spaceship.modules[module].health - weapon.Damage
+      end
+    end
+    se_update_enemy_sprite(true, enemy_spaceship.shields, enemy_spaceship.health)
+  end)
+end

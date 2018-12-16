@@ -43,3 +43,4 @@ se_language.eng["BugsAtStationMain"] = "You hear voiced from your communicator. 
 se_language.eng["FireOnScienceTrySavePeople"] = "Save people on station"
 se_language.eng["FireOnScienceTrySavePeopleDock"] = "You decided to dock with the station and save people. They are very grateful to you"
 se_language.eng["FireOnScienceTrySavePeopleDockDead"] = "You decided to dock with the station and save people. But when you came close to the station, all people were dead already"
+se_language.eng["BugsOnAsteroids"] = "After hyper jump you face a giant asteroid full of... Bugs! They are everywhere! And you crash into that asteroid, and bugs got into your ship!"

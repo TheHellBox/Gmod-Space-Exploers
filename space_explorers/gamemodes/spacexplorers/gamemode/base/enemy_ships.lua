@@ -122,20 +122,3 @@ function se_enemy_spaceship_make_random_shot()
     weapon.Charge = 0
   end
 end
-
--- Damage ship with specific weapon
-function se_damage_enemy_ship_with_weapon(weapon, module)
-  timer.Create("se_weapon_shoot_main", 0.5, weapon.Shots, function()
-    players_spaceship.modules.Weapons.ent:EmitSound("weapons/ar2/fire1.wav")
-    if enemy_spaceship.shields > 20 and !weapon.IgnoreShileds then
-        enemy_spaceship.shields = enemy_spaceship.shields - weapon.Damage
-    else
-      local hit = weapon.ShotChanse < math.random(0, 100)
-      if hit then
-        enemy_spaceship.health = enemy_spaceship.health - weapon.Damage
-        enemy_spaceship.modules[module].health = enemy_spaceship.modules[module].health - weapon.Damage
-      end
-    end
-    se_update_enemy_sprite(true, enemy_spaceship.shields, enemy_spaceship.health)
-  end)
-end

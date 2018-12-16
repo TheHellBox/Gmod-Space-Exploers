@@ -320,6 +320,32 @@ function se_init_comms()
         },
       }
     },
+    AteroidWithBugs = {
+      Name = "Bugs asteroid",
+      Text = se_language[se_settings.language]["BugsOnAsteroids"],
+      Enemy = false,
+      CustomFnEnabled = true,
+      CustomFn = function()
+        local bugs_pos = {
+          Vector(-1695,-1024,32),
+          Vector(-1691,-907,32),
+          Vector(-1691,-769,32),
+          Vector(-1548,-766,32),
+          Vector(-1458,-905,32),
+          Vector(-1208,-927,32),
+          Vector(-989,-941,32),
+          Vector(-857,-791,32),
+          Vector(-728,-1024,32),
+          Vector(-442,-895,32),
+        }
+        for k, v in pairs(bugs_pos) do
+          local ant = ents.Create("npc_antlion")
+          ant:SetPos(v)
+          ant:Spawn()
+        end
+      end,
+      Options = {}
+    },
   }
 end
 function se_choose_comm(choose)
@@ -366,6 +392,27 @@ function se_choose_comm(choose)
   end
 end
 
+
+function se_random_comm(star)
+  local option, key = table.Random(communication_options)
+  if star.type == "Shop" then
+    option = communication_options.ShopSimple
+    key = "ShopSimple"
+  end
+  se_curret_comm = key
+  players_spaceship.modules.Communication.ent:PrintLn("- "..option.Text)
+  local i = 0
+  for k, v in pairs(option.Options) do
+    i = i + 1
+    players_spaceship.modules.Communication.ent:PrintLn("  "..i.."."..v.text)
+  end
+  if option.Enemy then
+    se_create_random_enemy_ship()
+  end
+  if option.CustomFnEnabled then
+    option.CustomFn()
+  end
+end
 
 net.Receive("send_my_team", function(len, ply)
   local team = net.ReadInt(8)

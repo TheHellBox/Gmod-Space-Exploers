@@ -40,3 +40,4 @@ se_language.rus["BugsAtStationMain"] = "Вы слышите голоса из в
 se_language.rus["FireOnScienceTrySavePeople"] = "Спасти их"
 se_language.rus["FireOnScienceTrySavePeopleDock"] = "Вы решили спасти людей. Они вам очень благодарны"
 se_language.rus["FireOnScienceTrySavePeopleDockDead"] = "Вы решили спасти людей. Но как только вы при стыковались, оказалось что все люди уже мертвы"
+se_language.rus["BugsOnAsteroids"] = "После гипер прыжка вы натыкаетесь на астеройд полный... Жуков! Они повсюду! И что немаловажно, в панике вы врезались в него, и теперь эти твари ползают по вашему кораблю!"
