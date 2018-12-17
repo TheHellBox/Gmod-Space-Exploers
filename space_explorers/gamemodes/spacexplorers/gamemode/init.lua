@@ -4,7 +4,7 @@
 
 -- About comments, I made them AFTER I wrote all the code, so they can be wrong in some places
 
---resource.AddWorkshop( "1590745371" )
+resource.AddWorkshop( "1590745371" )
 
 space_explorers = {}
 
