@@ -57,7 +57,7 @@ hook.Add( "PostDrawTranslucentRenderables", "SE_DrawSpaceBody", function()
   end
 
   if enemy_sprite and enemy_sprite.Exists and is_player_there then
-    cam.Start3D2D(Vector(-352, 445, 100), Angle(0, 0, 90), 1.0)
+    cam.Start3D2D(Vector(-352, 6845, 100), Angle(0, 0, 90), 5.0)
     surface.SetDrawColor( 255, 255 * (enemy_sprite.Health / 100), 255 * (enemy_sprite.Health / 100), 255 )
   	surface.SetMaterial( se_enemy	)
   	surface.DrawTexturedRect( 0, 0, 179, 60 )
